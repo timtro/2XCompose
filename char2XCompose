@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+from toXComposeTools import char2XC, char2XCWeb
+
+
+def main(char: str, keys: str, charInfoGetter):
+
+    print(charInfoGetter(char, keys))
+
+
+if __name__ == '__main__':
+    args = ArgumentParser(
+        description="Returns a string formatted for inclusion in XCompose")
+
+    args.add_argument('char', help='The character to look up')
+    args.add_argument('--keys',
+                      default='<Multi_key> ',
+                      type=str,
+                      help='Key combo string for XCompose.')
+    args.add_argument('-w', '--web',
+                      action='store_true',
+                      help='Use Internet resources to obtain \
+                unicode character data.')
+
+    args = args.parse_args()
+
+    if args.char == None:
+        raise Exception('Must specify a character to lookup.')
+    if len(args.char) != 1:
+        raise Exception('Must specify A SINGLE character to look up.')
+
+    if args.web:
+        charInfoGetter = char2XCWeb
+    else:
+        charInfoGetter = char2XC
+
+    main(args.char, args.keys, charInfoGetter)
