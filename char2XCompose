@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
-from toXComposeTools import char2XC, char2XCWeb
+from toXComposeTools import char2XCLine, char2XCLineWeb
 
 
 def main(char: str, keys: str, charInfoGetter):
@@ -31,8 +31,8 @@ if __name__ == '__main__':
         raise Exception('Must specify A SINGLE character to look up.')
 
     if args.web:
-        charInfoGetter = char2XCWeb
+        charInfoGetter = char2XCLineWeb
     else:
-        charInfoGetter = char2XC
+        charInfoGetter = char2XCLine
 
     main(args.char, args.keys, charInfoGetter)
