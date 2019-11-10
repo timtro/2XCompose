@@ -5,12 +5,12 @@ from bs4 import BeautifulSoup
 from string import hexdigits
 
 """
-Namin conventions
+Naming conventions:
 
-    uhex—a string formatted "U𝑿",
-        where 𝑥 is a string of hexdigits. Eg. '' has uhex 'U2192'
+    uhex: a string formatted "U𝑥",
+        where 𝑥 is a string of hexdigits. Eg. '→' has uhex 'U2192'
 
-    xCLine—a string formatted '<𝐴> [<𝐵> ⋯ ] : "𝐶" # 𝑁'
+    xCLine: a string formatted '<𝐴> [<𝐵> ⋯ ] : "𝐶" # 𝑁'
         where 𝐴 and 𝐵 are keys, 𝐶 is the unicode char and 𝑁 is 𝐶's unicode name.
 
 """
@@ -57,11 +57,24 @@ def lookupName(name: str) -> ChrUhexName:
     return (char, char2Uhex(char), name)
 
 
-def char2XCLine(char: str, keyStr=None) -> str:
-    (_, uhx, name) = lookupChar(char)
+def ChrUhexName2XCLine(cun: ChrUhexName, keyStr: str = None) -> str:
+    (char, uhx, name) = cun
+    uhx = uhx.upper()
     if not keyStr:
         keyStr = ""
     return keyStr + ': "' + char + '" ' + uhx + ' # ' + name
+
+
+def char2XCLine(char: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookupChar(char), keyStr)
+
+
+def hex2XCLine(uhx: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookupUhex(uhx), keyStr)
+
+
+def name2XCLine(name: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookupName(name), keyStr)
 
 
 baseURL = 'http://www.ltg.ed.ac.uk/~richard/utf-8.cgi?input='
@@ -94,7 +107,4 @@ def lookupCharWeb(char: str) -> ChrUhexName:
 
 
 def char2XCLineWeb(char: str, keyStr=None) -> str:
-    (_, uhx, name) = lookupCharWeb(char)
-    if not keyStr:
-        keyStr = ""
-    return keyStr + ': "' + char + '" ' + uhx + ' # ' + name
+    return ChrUhexName2XCLine(lookupCharWeb(char), keyStr)
