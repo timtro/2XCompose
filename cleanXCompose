@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
-from toXComposeTools import char2XCLine, char2XCLineWeb, hex2XCLine, name2XCLine
+import toXComposeTools as toXC
 from functools import partial
 import logging
 import sys
 
-def main(xComposeFilePath, chosenChar2XCLine):
 
-    with open(xComposeFilePath) as XCFile:
+def main(infile, outfile):
+
+    with open(infile) as XCFile:
         XCLines = XCFile.readlines()
 
-    lineProcessor = partial(processLine, chosenChar2XCLine)
-    processAndPrint = lambda line : print(lineProcessor(line))
-    newXCLines = list(filter(None, map(processAndPrint, XCLines)))
+    lineProcessor = partial(processLine, toXC.char2xc)
+
+    with open(outfile, 'w') as outXC:
+        def processAndPrint(line): return outXC.write(
+            lineProcessor(line) + '\n')
+        newXCLines = list(filter(None, map(processAndPrint, XCLines)))
 
 
-def processLine(chosenChar2XCLine, line):
+def processLine(usr_char2xc, line):
     """
     process lines of form
         <SOME> <KEYS> : "C" # BLAH
@@ -27,22 +31,35 @@ def processLine(chosenChar2XCLine, line):
     if is_comment(line) or is_include(line):
         return line.strip()
 
+    if not line.count(':') == 1 and line.count('"') >= 2:
+        logging.warning("Unrecognized format in line:\n\t" + line)
+        return line.strip()
+
     (keys_char_uhx, _, name) = line.partition('#')
     (keys, _, char_uhx) = keys_char_uhx.partition(':')
     (_, char, uhx) = char_uhx.strip().split('"')
     char = char.strip()
-    uhx = uhx.strip()
+    uhx = uhx.strip().upper()
     name = name.strip()
 
     if uhx:
-        if chosenChar2XCLine(char) != hex2XCLine(uhx):
-            logging.warning("Character '" + char \
-                   + "' doesn't match codepoint '" + uhx + "'")
-            if name and chosenChar2XCLine(char) != name2XCLine(name):
-                logging.error("Also, character '" + char \
-                       + "' doesn't match name '" + name + "'")
+        charLup = toXC.lookup_char(char)
+        uhexLup = toXC.lookup_uhex(uhx)
+        if charLup != uhexLup:
+            if prompt_charT_uhexF(
+                'Conflict in XCompose: ("' + char + '", ' + uhx + ').\n'
+                    + '\t[c] Character lookup gives: '
+                + '"' + charLup[0] + '", ' +
+                    charLup[1] + ', ' + charLup[2] + '\n'
+                    + '\t[h] Hex codepoint lookup gives: '
+                + '"' + uhexLup[0] + '", ' +
+                uhexLup[1] + ', ' + uhexLup[2] + '\n'
+                    + 'Which is correct?'):
+                (_, uhx, name) = charLup
+            else:
+                (char, uhx, name) = uhexLup
 
-    return chosenChar2XCLine(char, ' '.join(keys.split()))
+    return usr_char2xc(char, ' '.join(keys.split()))
 
 
 def is_include(str):
@@ -59,23 +76,25 @@ def is_comment(str):
         return False
 
 
+def prompt_charT_uhexF(question):
+    reply = input(question + ' ([c]har/[h]ex): ').lower().strip()
+    if reply in ["c", "ch", "char"]:
+        return True
+    elif reply in ["h", "he", "hex"]:
+        return False
+    else:
+        return user_says_yes("Invalid response. Please enter")
+
+
 if __name__ == '__main__':
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
     args = ArgumentParser(
         description="Removes extraneous spaces, verifies hex codes, \
-            inserts descriptions from XCompose file")
+            inserts Unicode names from Unicode database.")
 
-    args.add_argument('filepath', type=str, help='Path to XCompose file')
-    args.add_argument('-w', '--web',
-                      action='store_true',
-                      help='Use Internet resources to obtain \
-                unicode character data.')
+    args.add_argument('infile', type=str, help='Path to XCompose file')
+    args.add_argument('outfile', type=str, help='Path to output file')
 
     args = args.parse_args()
 
-    if args.web:
-        chosenChar2XCLine = char2XCLineWeb
-    else:
-        chosenChar2XCLine = char2XCLine
-
-    main(args.filepath, chosenChar2XCLine)
+    main(args.infile, args.outfile)

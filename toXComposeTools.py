@@ -19,7 +19,7 @@ Naming conventions:
 ChrUhexName = NewType('ChrUhexName', Tuple[str, str, str])
 
 
-def char2Uhex(char: str) -> str:
+def char2uhex(char: str) -> str:
     assert len(char) == 1, 'Must look up single characters.'
     return 'U'+'%04X' % ord(char)
 
@@ -29,18 +29,18 @@ def uhex2int(hx: str) -> int:
     return int(hx, 16)
 
 
-def lookupChar(char: str) -> ChrUhexName:
+def lookup_char(char: str) -> ChrUhexName:
     try:
         charname = uc.name(char)
     except:
         charname = "ERR: Name not found"
 
     return (char,
-            char2Uhex(char),
+            char2uhex(char),
             charname)
 
 
-def lookupUhex(uhx: str) -> ChrUhexName:
+def lookup_uhex(uhx: str) -> ChrUhexName:
     char = chr(uhex2int(uhx))
     try:
         charname = uc.name(char)
@@ -48,13 +48,13 @@ def lookupUhex(uhx: str) -> ChrUhexName:
         charname = "ERR: Name not found"
 
     return (char,
-            uhx,
+            uhx.upper(),
             charname)
 
 
-def lookupName(name: str) -> ChrUhexName:
+def lookup_name(name: str) -> ChrUhexName:
     char = uc.lookup(name)
-    return (char, char2Uhex(char), name)
+    return (char, char2uhex(char), name)
 
 
 def ChrUhexName2XCLine(cun: ChrUhexName, keyStr: str = None) -> str:
@@ -65,30 +65,30 @@ def ChrUhexName2XCLine(cun: ChrUhexName, keyStr: str = None) -> str:
     return keyStr + ': "' + char + '" ' + uhx + ' # ' + name
 
 
-def char2XCLine(char: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookupChar(char), keyStr)
+def char2xc(char: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookup_char(char), keyStr)
 
 
-def hex2XCLine(uhx: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookupUhex(uhx), keyStr)
+def uhex2xc(uhx: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookup_uhex(uhx), keyStr)
 
 
-def name2XCLine(name: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookupName(name), keyStr)
+def name2xc(name: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookup_name(name), keyStr)
 
 
 baseURL = 'http://www.ltg.ed.ac.uk/~richard/utf-8.cgi?input='
 
 
-def charLookupURL(char: str) -> str:
+def char_lookup_url(char: str) -> str:
     return baseURL + char + '&mode=char'
 
 
-def hexLookupURL(hx: str) -> str:
+def uhex_lookup_url(hx: str) -> str:
     return baseURL + hx + '&mode=hex'
 
 
-def scrapeURL(URL: str) -> ChrUhexName:
+def scrape_url(URL: str) -> ChrUhexName:
     response = requests.get(URL)
     infoTRs = BeautifulSoup(response.text, 'html.parser').findAll('tr')
     charData = {}
@@ -102,9 +102,9 @@ def scrapeURL(URL: str) -> ChrUhexName:
             charData['Character name'])
 
 
-def lookupCharWeb(char: str) -> ChrUhexName:
-    return scrapeURL(charLookupURL(char))
+def lookup_char_web(char: str) -> ChrUhexName:
+    return scrape_url(char_lookup_url(char))
 
 
-def char2XCLineWeb(char: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookupCharWeb(char), keyStr)
+def char2xc_web(char: str, keyStr=None) -> str:
+    return ChrUhexName2XCLine(lookup_char_web(char), keyStr)
