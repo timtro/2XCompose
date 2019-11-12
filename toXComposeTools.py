@@ -7,16 +7,24 @@ from string import hexdigits
 """
 Naming conventions:
 
-    uhex: a string formatted "U𝑥",
+    Identifiers beggining with an uppercase character are type names.
+
+    Snake_case is for routines, cammelCase is for plain ol' data.
+
+    uhex : a string formatted "U𝑥",
         where 𝑥 is a string of hexdigits. Eg. '→' has uhex 'U2192'
 
-    xCLine: a string formatted '<𝐴> [<𝐵> ⋯ ] : "𝐶" # 𝑁'
+    xc : a string formatted '<𝐴> [<𝐵> ⋯ ] : "𝐶" # 𝑁'
         where 𝐴 and 𝐵 are keys, 𝐶 is the unicode char and 𝑁 is 𝐶's unicode name.
 
+    …X… : (Uppercase 'X') conjuction of types in type names.
+
+    …2… : conversion from LHS to RHS, used in place of underscore in routine
+        name.
 """
 
 
-ChrUhexName = NewType('ChrUhexName', Tuple[str, str, str])
+CharXuhexXname = NewType('CharXuhexXname', Tuple[str, str, str])
 
 
 def char2uhex(char: str) -> str:
@@ -29,7 +37,7 @@ def uhex2int(hx: str) -> int:
     return int(hx, 16)
 
 
-def lookup_char(char: str) -> ChrUhexName:
+def lookup_char(char: str) -> CharXuhexXname:
     try:
         charname = uc.name(char)
     except:
@@ -40,7 +48,7 @@ def lookup_char(char: str) -> ChrUhexName:
             charname)
 
 
-def lookup_uhex(uhx: str) -> ChrUhexName:
+def lookup_uhex(uhx: str) -> CharXuhexXname:
     char = chr(uhex2int(uhx))
     try:
         charname = uc.name(char)
@@ -52,12 +60,12 @@ def lookup_uhex(uhx: str) -> ChrUhexName:
             charname)
 
 
-def lookup_name(name: str) -> ChrUhexName:
+def lookup_name(name: str) -> CharXuhexXname:
     char = uc.lookup(name)
     return (char, char2uhex(char), name)
 
 
-def ChrUhexName2XCLine(cun: ChrUhexName, keyStr: str = None) -> str:
+def CharXuhexXname2xc(cun: CharXuhexXname, keyStr: str = None) -> str:
     (char, uhx, name) = cun
     uhx = uhx.upper()
     if not keyStr:
@@ -66,15 +74,15 @@ def ChrUhexName2XCLine(cun: ChrUhexName, keyStr: str = None) -> str:
 
 
 def char2xc(char: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookup_char(char), keyStr)
+    return CharXuhexXname2xc(lookup_char(char), keyStr)
 
 
 def uhex2xc(uhx: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookup_uhex(uhx), keyStr)
+    return CharXuhexXname2xc(lookup_uhex(uhx), keyStr)
 
 
 def name2xc(name: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookup_name(name), keyStr)
+    return CharXuhexXname2xc(lookup_name(name), keyStr)
 
 
 baseURL = 'http://www.ltg.ed.ac.uk/~richard/utf-8.cgi?input='
@@ -88,7 +96,7 @@ def uhex_lookup_url(hx: str) -> str:
     return baseURL + hx + '&mode=hex'
 
 
-def scrape_url(URL: str) -> ChrUhexName:
+def scrape_url(URL: str) -> CharXuhexXname:
     response = requests.get(URL)
     infoTRs = BeautifulSoup(response.text, 'html.parser').findAll('tr')
     charData = {}
@@ -102,9 +110,9 @@ def scrape_url(URL: str) -> ChrUhexName:
             charData['Character name'])
 
 
-def lookup_char_web(char: str) -> ChrUhexName:
+def lookup_char_web(char: str) -> CharXuhexXname:
     return scrape_url(char_lookup_url(char))
 
 
 def char2xc_web(char: str, keyStr=None) -> str:
-    return ChrUhexName2XCLine(lookup_char_web(char), keyStr)
+    return CharXuhexXname2xc(lookup_char_web(char), keyStr)
