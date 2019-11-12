@@ -9,18 +9,15 @@ import sys
 
 def main(infile, outfile):
 
-    with open(infile) as XCFile:
-        XCLines = XCFile.readlines()
+    process_line = partial(process_line_using, toXC.char2xc)
 
-    lineProcessor = partial(processLine, toXC.char2xc)
-
-    with open(outfile, 'w') as outXC:
-        def processAndPrint(line): return outXC.write(
-            lineProcessor(line) + '\n')
-        newXCLines = list(filter(None, map(processAndPrint, XCLines)))
+    with open(infile) as inXC:
+        with open(outfile, 'w') as outXC:
+            for each in filter(None, map(process_line, inXC)):
+                outXC.write(each + '\n')
 
 
-def processLine(usr_char2xc, line):
+def process_line_using(usr_char2xc, line):
     """
     process lines of form
         <SOME> <KEYS> : "C" # BLAH
