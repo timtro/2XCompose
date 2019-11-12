@@ -9,18 +9,19 @@ Naming conventions:
 
     Identifiers beggining with an uppercase character are type names.
 
-    Snake_case is for routines, cammelCase is for plain ol' data.
+    Snake_case is for callables, cammelCase is for plain ol' data.
 
     uhex : a string formatted "U𝑥",
         where 𝑥 is a string of hexdigits. Eg. '→' has uhex 'U2192'
 
     xc : a string formatted '<𝐴> [<𝐵> ⋯ ] : "𝐶" # 𝑁'
-        where 𝐴 and 𝐵 are keys, 𝐶 is the unicode char and 𝑁 is 𝐶's unicode name.
+        where 𝐴 and 𝐵 are keys, 𝐶 is the unicode char and 𝑁 is 𝐶's unicode
+        name.
 
-    …X… : (Uppercase 'X') conjuction of types in type names.
+    …X… : (Uppercase 'X') conjuction of types in type names. Read as “AND.”
 
     …2… : conversion from LHS to RHS, used in place of underscore in routine
-        name.
+        name. Read as “TO.”
 """
 
 
@@ -40,7 +41,7 @@ def uhex2int(hx: str) -> int:
 def lookup_char(char: str) -> CharXuhexXname:
     try:
         charname = uc.name(char)
-    except:
+    except ValueError:
         charname = "ERR: Name not found"
 
     return (char,
@@ -52,7 +53,7 @@ def lookup_uhex(uhx: str) -> CharXuhexXname:
     char = chr(uhex2int(uhx))
     try:
         charname = uc.name(char)
-    except:
+    except ValueError:
         charname = "ERR: Name not found"
 
     return (char,
@@ -103,7 +104,7 @@ def scrape_url(URL: str) -> CharXuhexXname:
     for row in infoTRs:
         cells = row.findAll('td')
         charData[cells[0].find(text=True)] = cells[1].find(text=True)
-    if charData['Character name'] == None:
+    if charData['Character name'] is None:
         charData['Character name'] = "ERR: Name not found"
     return (charData['Character'],
             "U"+charData['Hex code point'],

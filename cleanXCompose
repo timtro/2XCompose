@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import Callable
 from argparse import ArgumentParser
 import toXComposeTools as toXC
 from functools import partial
@@ -7,7 +8,7 @@ import logging
 import sys
 
 
-def main(infile, outfile):
+def main(infile: str, outfile: str) -> None:
 
     process_line = partial(process_line_using, toXC.char2xc)
 
@@ -17,7 +18,8 @@ def main(infile, outfile):
                 outXC.write(each + '\n')
 
 
-def process_line_using(usr_char2xc, line):
+def process_line_using(usr_char2xc: Callable[[str, str], str],
+                       line: str) -> str:
     """
     process lines of form
         <SOME> <KEYS> : "C" # BLAH
@@ -59,21 +61,21 @@ def process_line_using(usr_char2xc, line):
     return usr_char2xc(char, ' '.join(keys.split()))
 
 
-def is_include(str):
-    if "include" in str:
+def is_include(line: str) -> bool:
+    if "include" in line:
         return True
     else:
         return False
 
 
-def is_comment(str):
-    if str[0] == '#':
+def is_comment(line: str) -> bool:
+    if line.strip()[0] == '#':
         return True
     else:
         return False
 
 
-def prompt_charT_uhexF(question):
+def prompt_charT_uhexF(question: str) -> bool:
     reply = input(question + ' ([c]har/[h]ex): ').lower().strip()
     if reply in ["c", "ch", "chr", "char"]:
         return True
