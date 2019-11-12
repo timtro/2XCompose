@@ -80,7 +80,7 @@ def prompt_charT_uhexF(question):
     elif reply in ["h", "he", "hex"]:
         return False
     else:
-        return user_says_yes("Invalid response. Please enter")
+        return prompt_charT_uhexF("Invalid response. Please enter")
 
 
 if __name__ == '__main__':
