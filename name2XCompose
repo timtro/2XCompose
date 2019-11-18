@@ -6,9 +6,9 @@ from toXComposeTools import name2xc
 
 
 def main(name: str, keys: str,
-         charInfoGetter: Callable[[str, str], str]) -> None:
+         user_name2xc: Callable[[str, str], str]) -> None:
 
-    print(charInfoGetter(name, keys))
+    print(user_name2xc(name, keys))
 
 
 if __name__ == '__main__':
@@ -23,8 +23,8 @@ if __name__ == '__main__':
     args = args.parse_args()
 
     if args.name is None:
-        raise Exception('Must specify a character to lookup.')
+        raise ValueError('Must specify a character to lookup.')
 
-    charInfoGetter = name2xc
+    user_name2xc = name2xc
 
-    main(args.name, args.keys, charInfoGetter)
+    main(args.name, args.keys, user_name2xc)
