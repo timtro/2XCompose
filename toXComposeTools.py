@@ -57,7 +57,7 @@ def lookup_uhex(uhx: str) -> CharXuhexXname:
         charname = "ERR: Name not found"
 
     return (char,
-            uhx.upper(),
+            char2uhex(char),
             charname)
 
 
@@ -93,7 +93,8 @@ def char_lookup_url(char: str) -> str:
     return baseURL + char + '&mode=char'
 
 
-def uhex_lookup_url(hx: str) -> str:
+def uhex_lookup_url(uhex: str) -> str:
+    hx = ''.join(c for c in uhex if c in hexdigits)
     return baseURL + hx + '&mode=hex'
 
 
@@ -115,5 +116,14 @@ def lookup_char_web(char: str) -> CharXuhexXname:
     return scrape_url(char_lookup_url(char))
 
 
+def lookup_uhex_web(uhex: str) -> CharXuhexXname:
+    return scrape_url(uhex_lookup_url(uhex))
+
+
 def char2xc_web(char: str, keyStr=None) -> str:
     return CharXuhexXname2xc(lookup_char_web(char), keyStr)
+
+
+def uhex2xc_web(uhex: str, keyStr=None) -> str:
+    return CharXuhexXname2xc(lookup_uhex_web(uhex), keyStr)
+

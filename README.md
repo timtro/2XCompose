@@ -17,7 +17,8 @@ Text after a pound-sign, #, are comments. So while not strictly required, the Un
 ## Utilities
 
 * `cleanXCompose` proofreads an XCompose file correlating characters 𝐶 with the provided hex Unicode points 𝑋. It preserves user comments, includes and empty lines. User provided names are ignored and are replaced in output by the name provided in the selected database (Python's built in or `--web`).
-* `char2XCompose` takes a single Unicode character as a positional argument, and optionally a key string `<𝐴> [<𝐵> ⋯]` specified with `--keys`. It produces a formatted line for an XCompose file, complete with hex codepoint and name comment.
-* `name2XCompose` takes a single string and uses Python's build in name-lookup, producing a formatted XCompose line complete with hex codepoint and name comment.
+* `char2XCompose` takes a single Unicode character as a positional argument, and optionally a key string `<𝐴> [<𝐵> ⋯]` specified with `--keys`. It produces a formatted line for an XCompose file, complete with hex codepoint and name comment. Uses Python's built in Unicode database, or web interfece if provided `--web`.
+* `hex2XCompose` takes a string, a hex Unicode codepoint such as `U21D4` and optionally a key string `<𝐴> [<𝐵> ⋯]` specified with `--keys`. It produces a formatted line for an XCompose file, complete with hex codepoint and name comment. Uses Python's built in Unicode database, or web interfece if provided `--web`.
+* `name2XCompose` takes a single string and uses Python's build in name-lookup, producing a formatted XCompose line complete with hex codepoint and name comment. No `--web` option because Tobin's interface doesn't offer name-lookup.
 
 Thanks to [Richard Tobin](http://www.cogsci.ed.ac.uk/~richard/) for maintaining the web app used for the web back-end: http://www.ltg.ed.ac.uk/~richard/utf-8.html
