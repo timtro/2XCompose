@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+from typing import Callable
+from argparse import ArgumentParser
+from toXComposeTools import name2xc
+
+
+def main(name: str, keys: str,
+         charInfoGetter: Callable[[str, str], str]) -> None:
+
+    print(charInfoGetter(name, keys))
+
+
+if __name__ == '__main__':
+    args = ArgumentParser(
+        description="Returns a string formatted for inclusion in XCompose")
+
+    args.add_argument('name', help='The Unicode name of the character to look up')
+    args.add_argument('--keys',
+                      default='<Multi_key> ',
+                      type=str,
+                      help='Key combo string for XCompose.')
+    args = args.parse_args()
+
+    if args.name is None:
+        raise Exception('Must specify a character to lookup.')
+
+    charInfoGetter = name2xc
+
+    main(args.name, args.keys, charInfoGetter)

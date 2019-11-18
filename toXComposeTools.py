@@ -71,7 +71,7 @@ def CharXuhexXname2xc(cun: CharXuhexXname, keyStr: str = None) -> str:
     uhx = uhx.upper()
     if not keyStr:
         keyStr = ""
-    return keyStr + ': "' + char + '" ' + uhx + ' # ' + name
+    return keyStr + ' : "' + char + '" ' + uhx + ' # ' + name
 
 
 def char2xc(char: str, keyStr=None) -> str:
