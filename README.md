@@ -2,12 +2,16 @@
 Automated commandline tools for creating, cleaning and maintaining XCompose files.
 
 An XCompose file consists of lines that may be `include` statements or lines formatted as
-    <𝐴> [<𝐵> ⋯ ] : "𝐶" U𝑋 #𝑁
+```
+    <𝐴> [<𝐵> ⋯ ] : "𝐶" U𝑋 [#𝑁]
+```
 where 𝐴, 𝐵,… are keys forming the key combination for the character, 𝐶 is the Unicode character, 𝑋 is the hexadecimal Unicode point and 𝑁 is 𝐶's Unicode name.
 For example,
+```
     <Multi_key> <braceleft> <parenleft>: "⊂" U2282 # SUBSET OF
     <Multi_key> <braceleft> <equal> <parenleft>: "⊆" U2286 # SUBSET OF OR EQUAL TO
     <Multi_key> <exclam> <braceleft> <parenleft>: "⊄" U2284 # NOT A SUBSET OF
+```
 Text after a pound-sign, #, are comments. So while not strictly required, the Unicode names are nice to have for human readers, and can be used to find errors.
 
 ## Utilities
