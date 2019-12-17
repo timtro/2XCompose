@@ -8,6 +8,8 @@ from toXComposeTools import uhex2xc, uhex2xc_web
 def main(hexstr: str, keys: str,
          usr_hex2xc: Callable[[str, str], str]) -> None:
 
+    if '<Multi_key>' not in keys[0:11]:
+        keys = '<Multi_key> ' + keys
     print(usr_hex2xc(hexstr, keys))
 
 
@@ -35,4 +37,4 @@ if __name__ == '__main__':
     else:
         usr_hex2xc = uhex2xc
 
-    main(args.hexstr, args.keys, usr_hex2xc)
+    main(args.hexstr, args.keys.strip(), usr_hex2xc)

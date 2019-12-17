@@ -8,6 +8,8 @@ from toXComposeTools import name2xc
 def main(name: str, keys: str,
          user_name2xc: Callable[[str, str], str]) -> None:
 
+    if '<Multi_key>' not in keys[0:11]:
+        keys = '<Multi_key> ' + keys
     print(user_name2xc(name, keys))
 
 
@@ -27,4 +29,4 @@ if __name__ == '__main__':
 
     user_name2xc = name2xc
 
-    main(args.name, args.keys, user_name2xc)
+    main(args.name, args.keys.strip(), user_name2xc)
